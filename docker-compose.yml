@@ -1,0 +1,28 @@
+app:
+    image: busybox
+    volumes:
+        - .:/var/www/app
+    tty: true
+
+nginx:
+    image: yappabe/nginx
+    links:
+        - php
+    volumes_from:
+        - app
+    expose:
+        - 80
+    environment:
+        DOCUMENT_ROOT: /var/www/app
+        INDEX_FILE: index.php
+        PHP_FPM_SOCKET: php:9000
+        DNSDOCK_ALIAS: bpost-test.docker.webfolks.be
+
+php:
+    image: yappabe/php:7.4
+    working_dir: /var/www/app
+    volumes_from:
+        - app
+    mem_limit: 2000000000
+    environment:
+        PHP_FPM_USER: root
